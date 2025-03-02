@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>MVC模式 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="用一种将业务逻辑、数据、视图分离的方式组织架构代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MVC模式">
+<meta property="og:url" content="http://example.com/2016/11/03/designPattern/model-view-controller/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="用一种将业务逻辑、数据、视图分离的方式组织架构代码。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2016-11-03T09:49:37.000Z">
+<meta property="article:modified_time" content="2025-03-02T15:49:02.600Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="架构型模式">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-designPattern/model-view-controller" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/11/03/designPattern/model-view-controller/" class="article-date">
+  <time class="dt-published" datetime="2016-11-03T09:49:37.000Z" itemprop="datePublished">2016-11-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      MVC模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>用一种将业务逻辑、数据、视图分离的方式组织架构代码。</p>
+</blockquote>
+<span id="more"></span>
+<h1 id="简单MVC示意"><a href="#简单MVC示意" class="headerlink" title="简单MVC示意"></a>简单MVC示意</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"> (<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="variable constant_">MVC</span> = <span class="variable constant_">MVC</span> || &#123;&#125;;</span><br><span class="line">    <span class="variable constant_">MVC</span>.<span class="property">model</span> = (<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">var</span> M = &#123;&#125;;                     <span class="comment">//内部数据对象</span></span><br><span class="line">        M.<span class="property">data</span>  = &#123;&#125;;                  <span class="comment">//服务端获取的数据</span></span><br><span class="line">        M.<span class="property">conf</span> = &#123;&#125;;                   <span class="comment">//配置数据，页面加载时提供</span></span><br><span class="line">        <span class="keyword">return</span> &#123;                          <span class="comment">//返回数据模型层对象操作方法</span></span><br><span class="line">            <span class="attr">getData</span>:<span class="keyword">function</span>(<span class="params">m</span>)&#123;        <span class="comment">//根据字段获取服务端数据</span></span><br><span class="line">                <span class="keyword">return</span> M.<span class="property">data</span>[m];</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">getConf</span>:<span class="keyword">function</span>(<span class="params">c</span>)&#123;         <span class="comment">//根据字段获取配置数据</span></span><br><span class="line">                <span class="keyword">return</span> M.<span class="property">conf</span>[c];</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">setData</span>:<span class="keyword">function</span>(<span class="params">m,v</span>)&#123;      <span class="comment">//设置服务端数据</span></span><br><span class="line">                M.<span class="property">data</span>[m] = v;</span><br><span class="line">                <span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">setConf</span>:<span class="keyword">function</span>(<span class="params">c,v</span>)&#123;       <span class="comment">//设置配置数据</span></span><br><span class="line">                M.<span class="property">conf</span>[c] =v;</span><br><span class="line">                <span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;                                           <span class="comment">//之所以都是自执行的形式，是为了对外提供访问接口</span></span><br><span class="line">    &#125;)();</span><br><span class="line">    <span class="variable constant_">MVC</span>.<span class="property">view</span> = (<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">var</span> M = <span class="variable constant_">MVC</span>.<span class="property">model</span>;          <span class="comment">//模型数据层对象操作方法引用,--视图层可以调用数据层创建视图</span></span><br><span class="line">        <span class="keyword">var</span> V = &#123;&#125;;                           <span class="comment">//内部视图创建方法对象</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params">v</span>)&#123;               <span class="comment">//根据视图名返回视图</span></span><br><span class="line">            V[v]();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)();</span><br><span class="line">    <span class="variable constant_">MVC</span>.<span class="property">ctrl</span> = (<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">var</span> M = <span class="variable constant_">MVC</span>.<span class="property">model</span>;          <span class="comment">//模型数据层对象操作方法引用，--控制层可以调用数据层数据</span></span><br><span class="line">        <span class="keyword">var</span> V = <span class="variable constant_">MVC</span>.<span class="property">veiw</span>;            <span class="comment">//模型视图数据层对象操作方法引用，--控制层可以控制视图创建</span></span><br><span class="line">        <span class="keyword">var</span> C = &#123;&#125;;                         <span class="comment">//控制器创建方法对象</span></span><br><span class="line">    &#125;)();</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
+<h1 id="简单实例"><a href="#简单实例" class="headerlink" title="简单实例"></a>简单实例</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 需要引入jquery，图片的元素尚无法加载</span></span><br><span class="line">(<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">var</span> <span class="variable constant_">MVC</span> = <span class="variable constant_">MVC</span> || &#123;&#125;;</span><br><span class="line">        <span class="variable constant_">MVC</span>.<span class="property">model</span> = (<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">            <span class="keyword">var</span> M = &#123;&#125;;                         <span class="comment">//内部数据对象</span></span><br><span class="line">            M.<span class="property">data</span>  = &#123;</span><br><span class="line">                <span class="attr">sideBar</span>:[</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="attr">text</span>:<span class="string">&#x27;萌妹子1&#x27;</span>,</span><br><span class="line">                        <span class="attr">icon</span>:<span class="string">&#x27;left_meng.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">title</span>:<span class="string">&#x27;喵耳萝莉的千本樱&#x27;</span>,</span><br><span class="line">                        <span class="attr">content</span>:<span class="string">&#x27;自古幼女有三好~&#x27;</span>,</span><br><span class="line">                        <span class="attr">img</span>:<span class="string">&#x27;left_meng_img.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">href</span>:<span class="string">&#x27;http://moe.hao123.com&#x27;</span></span><br><span class="line">                    &#125;,</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="attr">text</span>:<span class="string">&#x27;萌妹子2&#x27;</span>,</span><br><span class="line">                        <span class="attr">icon</span>:<span class="string">&#x27;left_meng.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">title</span>:<span class="string">&#x27;喵耳萝莉的千本樱&#x27;</span>,</span><br><span class="line">                        <span class="attr">content</span>:<span class="string">&#x27;自古幼女有三好~&#x27;</span>,</span><br><span class="line">                        <span class="attr">img</span>:<span class="string">&#x27;left_meng_img.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">href</span>:<span class="string">&#x27;http://moe.hao123.com&#x27;</span></span><br><span class="line">                    &#125;,</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="attr">text</span>:<span class="string">&#x27;萌妹子3&#x27;</span>,</span><br><span class="line">                        <span class="attr">icon</span>:<span class="string">&#x27;left_meng.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">title</span>:<span class="string">&#x27;喵耳萝莉的千本樱&#x27;</span>,</span><br><span class="line">                        <span class="attr">content</span>:<span class="string">&#x27;自古幼女有三好~&#x27;</span>,</span><br><span class="line">                        <span class="attr">img</span>:<span class="string">&#x27;left_meng_img.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">href</span>:<span class="string">&#x27;http://moe.hao123.com&#x27;</span></span><br><span class="line">                    &#125;,</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="attr">text</span>:<span class="string">&#x27;萌妹子4&#x27;</span>,</span><br><span class="line">                        <span class="attr">icon</span>:<span class="string">&#x27;left_meng.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">title</span>:<span class="string">&#x27;喵耳萝莉的千本樱&#x27;</span>,</span><br><span class="line">                        <span class="attr">content</span>:<span class="string">&#x27;自古幼女有三好~&#x27;</span>,</span><br><span class="line">                        <span class="attr">img</span>:<span class="string">&#x27;left_meng_img.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">href</span>:<span class="string">&#x27;http://moe.hao123.com&#x27;</span></span><br><span class="line">                    &#125;,</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="attr">text</span>:<span class="string">&#x27;萌妹子5&#x27;</span>,</span><br><span class="line">                        <span class="attr">icon</span>:<span class="string">&#x27;left_meng.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">title</span>:<span class="string">&#x27;喵耳萝莉的千本樱&#x27;</span>,</span><br><span class="line">                        <span class="attr">content</span>:<span class="string">&#x27;自古幼女有三好~&#x27;</span>,</span><br><span class="line">                        <span class="attr">img</span>:<span class="string">&#x27;left_meng_img.png&#x27;</span>,</span><br><span class="line">                        <span class="attr">href</span>:<span class="string">&#x27;http://moe.hao123.com&#x27;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                ],</span><br><span class="line">                <span class="attr">newsMode</span>:[]                     <span class="comment">// 这里可以新添加模块</span></span><br><span class="line">            &#125;;                          <span class="comment">//服务端获取的数据</span></span><br><span class="line">            M.<span class="property">conf</span> = &#123;</span><br><span class="line">                <span class="attr">slideBarCloseAnimate</span>:<span class="literal">false</span>      <span class="comment">//侧边动画配置数据</span></span><br><span class="line">            &#125;;                        <span class="comment">//配置数据，页面加载时提供</span></span><br><span class="line">            <span class="keyword">return</span> &#123;                    <span class="comment">//返回数据模型层对象操作方法</span></span><br><span class="line">                <span class="attr">getData</span>:<span class="keyword">function</span>(<span class="params">m</span>)&#123;    <span class="comment">//根据字段获取服务端数据</span></span><br><span class="line">                    <span class="keyword">return</span> M.<span class="property">data</span>[m];</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="attr">getConf</span>:<span class="keyword">function</span>(<span class="params">c</span>)&#123;    <span class="comment">//根据字段获取配置数据</span></span><br><span class="line">                    <span class="keyword">return</span> M.<span class="property">conf</span>[c];</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="attr">setData</span>:<span class="keyword">function</span>(<span class="params">m,v</span>)&#123;  <span class="comment">//设置服务端数据</span></span><br><span class="line">                    M.<span class="property">data</span>[m] = v;</span><br><span class="line">                    <span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="attr">setConf</span>:<span class="keyword">function</span>(<span class="params">c,v</span>)&#123;  <span class="comment">//设置配置数据</span></span><br><span class="line">                    M.<span class="property">conf</span>[c] =v;</span><br><span class="line">                    <span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;                           <span class="comment">//之所以都是自执行的形式，是为了对外提供访问接口</span></span><br><span class="line">        &#125;)();</span><br><span class="line">        <span class="variable constant_">MVC</span>.<span class="property">view</span> = (<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">            <span class="keyword">var</span> M = <span class="variable constant_">MVC</span>.<span class="property">model</span>;          <span class="comment">//模型数据层对象操作方法引用,--视图层可以调用数据层创建视图</span></span><br><span class="line">            <span class="keyword">var</span> V = &#123;</span><br><span class="line">                <span class="attr">createSlideBar</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;              <span class="comment">//创建侧边栏</span></span><br><span class="line">                    <span class="keyword">var</span> html = <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">                            data = M.<span class="title function_">getData</span>(<span class="string">&#x27;sideBar&#x27;</span>);    <span class="comment">//视图渲染数据</span></span><br><span class="line">                    <span class="keyword">if</span>(!data || !data.<span class="property">length</span>)&#123;                      <span class="comment">//屏蔽无效数据</span></span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">var</span> dom = $(<span class="string">&#x27;&lt;div&gt;&lt;/div&gt;&#x27;</span>).<span class="title function_">attr</span>(&#123;<span class="string">&#x27;class&#x27;</span>:<span class="string">&#x27;sidebar&#x27;</span>,<span class="string">&#x27;id&#x27;</span>:<span class="string">&#x27;sidebar&#x27;</span>&#125;);    <span class="comment">//创建视图容器</span></span><br><span class="line">                    <span class="keyword">var</span> tpl = &#123;</span><br><span class="line">                        <span class="attr">container</span>:[         <span class="comment">//视图容器模板</span></span><br><span class="line">                                <span class="string">&#x27;&lt;div calss=&quot;sidebar-inner&quot;&gt;&lt;ul&gt;&#123;#content#&#125;&lt;/ul&gt;&lt;/div&gt;&#x27;</span>,</span><br><span class="line">                                <span class="string">&#x27;&lt;a hidefocus href=&quot;#&quot; class=&quot;sidebar-close&quot; title=&quot;收起&quot;&gt;&lt;/a&gt;&#x27;</span></span><br><span class="line">                        ].<span class="title function_">join</span>(<span class="string">&#x27;&#x27;</span>),</span><br><span class="line">                        <span class="attr">item</span>:[              <span class="comment">//导航图标模块模板</span></span><br><span class="line">                                <span class="string">&#x27;&lt;li&gt;&#x27;</span>,</span><br><span class="line">                                    <span class="string">&#x27;&lt;a class=&quot;icon&quot; href=&quot;&#123;#href#&#125;&quot;&gt;&#x27;</span>,</span><br><span class="line">                                        <span class="string">&#x27;&lt;img src=&quot;common/img/&#123;#icon#&#125;&quot;&gt;&#x27;</span>,</span><br><span class="line">                                        <span class="string">&#x27;&lt;span&gt;&#123;#text#&#125;&lt;/span&gt;&#x27;</span>,</span><br><span class="line">                                    <span class="string">&#x27;&lt;/a&gt;&#x27;</span>,</span><br><span class="line">                                    <span class="string">&#x27;&lt;div class=&quot;box&quot;&gt;&#x27;</span>,</span><br><span class="line">                                        <span class="string">&#x27;&lt;div&gt;&#x27;</span>,</span><br><span class="line">                                            <span class="string">&#x27;&lt;a class=&quot;title&quot; href=&quot;&#123;#href#&#125;&quot;&gt;&#123;#title#&#125;&lt;/a&gt;&#x27;</span>,</span><br><span class="line">                                            <span class="string">&#x27;&lt;a href=&quot;&#123;#href#&#125;&quot;&gt;&#123;#content#&#125;&lt;/a&gt;&#x27;</span>,</span><br><span class="line">                                        <span class="string">&#x27;&lt;/div&gt;&#x27;</span>,</span><br><span class="line">                                        <span class="string">&#x27;&lt;a class=&quot;image&quot; href=&quot;&#123;#href#&#125;&quot;&gt;&lt;img src=&quot;common/img/&#123;#img#&#125;&quot;/&gt;&lt;/a&gt;&#x27;</span>,</span><br><span class="line">                                    <span class="string">&#x27;&lt;/div&gt;&#x27;</span>,</span><br><span class="line">                                <span class="string">&#x27;&lt;/li&gt;&#x27;</span></span><br><span class="line">                        ].<span class="title function_">join</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">//渲染全部导航图片模块</span></span><br><span class="line">                    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>, len = data.<span class="property">length</span>;i&lt;len;i++)&#123;</span><br><span class="line">                        html += <span class="title function_">formatString</span>(tpl.<span class="property">item</span>,data[i]);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">//渲染导航视图并添加到页面</span></span><br><span class="line">                    dom.<span class="title function_">html</span>(<span class="title function_">formatString</span>(tpl.<span class="property">container</span>,&#123;<span class="attr">content</span>:html&#125;)).<span class="title function_">appendTo</span>($(<span class="string">&#x27;body&#x27;</span>));</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="attr">createNewsMod</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;&#125;      <span class="comment">//  新添加模块追加代码</span></span><br><span class="line">                </span><br><span class="line">            &#125;;                 <span class="comment">//内部视图创建方法对象</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params">v</span>)&#123;         <span class="comment">//根据视图名返回视图</span></span><br><span class="line">                V[v]();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)();</span><br><span class="line">        <span class="variable constant_">MVC</span>.<span class="property">ctrl</span> = (<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">            <span class="keyword">var</span> M = <span class="variable constant_">MVC</span>.<span class="property">model</span>;            <span class="comment">//模型数据层对象操作方法引用，--控制层可以调用数据层数据</span></span><br><span class="line">            <span class="keyword">var</span> V = <span class="variable constant_">MVC</span>.<span class="property">view</span>;               <span class="comment">//模型视图数据层对象操作方法引用，--控制层可以控制视图创建</span></span><br><span class="line">            <span class="keyword">var</span> C = &#123;</span><br><span class="line">                <span class="attr">initSideBar</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;         <span class="comment">// 控制器主要创建视图并添加事件, 而创建视图的具体实现也交给了视图层</span></span><br><span class="line">                    <span class="title function_">V</span>(<span class="string">&#x27;createSlideBar&#x27;</span>);        <span class="comment">//渲染导航栏模块视图</span></span><br><span class="line">                    $(<span class="string">&#x27;li&#x27;</span>,<span class="string">&#x27;.sidebar&#x27;</span>).<span class="title function_">on</span>(<span class="string">&#x27;mouseover&#x27;</span>,<span class="keyword">function</span>(<span class="params">e</span>)&#123;</span><br><span class="line">                        $(<span class="variable language_">this</span>).<span class="title function_">addClass</span>(<span class="string">&#x27;show&#x27;</span>);</span><br><span class="line">                    &#125;).<span class="title function_">on</span>(<span class="string">&#x27;mouseout&#x27;</span>,<span class="keyword">function</span>(<span class="params">e</span>)&#123;</span><br><span class="line">                        $(<span class="variable language_">this</span>).<span class="title function_">removeClass</span>(<span class="string">&#x27;show&#x27;</span>);</span><br><span class="line">                    &#125;)</span><br><span class="line">                    $(<span class="string">&#x27;.sidebar-close&#x27;</span>,<span class="string">&#x27;.sidebar&#x27;</span>).<span class="title function_">on</span>(<span class="string">&#x27;click&#x27;</span>,<span class="keyword">function</span>(<span class="params">e</span>)&#123;</span><br><span class="line">                        <span class="keyword">if</span>(M.<span class="title function_">getConf</span>(<span class="string">&#x27;slideBarCloseAnimate&#x27;</span>))&#123;</span><br><span class="line">                            <span class="keyword">return</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        M.<span class="title function_">setConf</span>(<span class="string">&#x27;slideBarCloseAnimate&#x27;</span>,<span class="literal">true</span>);</span><br><span class="line">                        <span class="keyword">var</span> $this = $(<span class="variable language_">this</span>);</span><br><span class="line">                        <span class="keyword">if</span>($this.<span class="title function_">hasClass</span>(<span class="string">&#x27;is-close&#x27;</span>))&#123;             <span class="comment">//如果箭头icon是关闭状态</span></span><br><span class="line">                            $(<span class="string">&#x27;.sidebar-inner&#x27;</span>,<span class="string">&#x27;.sidebar&#x27;</span>).<span class="title function_">animate</span>(&#123;</span><br><span class="line">                                <span class="attr">duration</span>:<span class="number">800</span>,</span><br><span class="line">                                <span class="attr">type</span>:<span class="string">&#x27;easeOutQuart&#x27;</span>,</span><br><span class="line">                                <span class="attr">main</span>:<span class="keyword">function</span>(<span class="params">dom</span>)&#123;</span><br><span class="line">                                    dom.<span class="title function_">css</span>(<span class="string">&#x27;left&#x27;</span>,-<span class="number">50</span>+<span class="variable language_">this</span>.<span class="property">tween</span>*<span class="number">50</span>+<span class="string">&#x27;px&#x27;</span>);</span><br><span class="line">                                &#125;,</span><br><span class="line">                                <span class="attr">end</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">                                    $this.<span class="title function_">removeClass</span>(<span class="string">&#x27;is-close&#x27;</span>);</span><br><span class="line">                                    M.<span class="title function_">setConf</span>(<span class="string">&#x27;slideBarCloseAnimate&#x27;</span>,<span class="literal">false</span>);</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;)</span><br><span class="line">                        &#125;<span class="keyword">else</span>&#123;                                      <span class="comment">//如果箭头icon是打开状态</span></span><br><span class="line">                            $(<span class="string">&#x27;.sidebar-inner&#x27;</span>,<span class="string">&#x27;.sidebar&#x27;</span>).<span class="title function_">animate</span>(&#123;</span><br><span class="line">                                <span class="attr">duration</span>:<span class="number">800</span>,</span><br><span class="line">                                <span class="attr">type</span>:<span class="string">&#x27;easeOutQuart&#x27;</span>,</span><br><span class="line">                                <span class="attr">main</span>:<span class="keyword">function</span>(<span class="params">dom</span>)&#123;</span><br><span class="line">                                    dom.<span class="title function_">css</span>(<span class="string">&#x27;left&#x27;</span>,<span class="variable language_">this</span>.<span class="property">tween</span>*-<span class="number">50</span>+<span class="string">&#x27;px&#x27;</span>);</span><br><span class="line">                                &#125;,</span><br><span class="line">                                <span class="attr">end</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">                                    $this.<span class="title function_">addClass</span>(<span class="string">&#x27;is-close&#x27;</span>);</span><br><span class="line">                                    M.<span class="title function_">setConf</span>(<span class="string">&#x27;slideBarCloseAnimate&#x27;</span>,<span class="literal">true</span>);</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;)</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;)</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="attr">initNewsMod</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;&#125;    <span class="comment">// 新增模块追加代码</span></span><br><span class="line">            &#125;;                 <span class="comment">//控制器创建方法对象</span></span><br><span class="line">            C.<span class="title function_">initSideBar</span>();</span><br><span class="line">             <span class="comment">/*for(var i in c)&#123;     // 遍历创建</span></span><br><span class="line"><span class="comment">                 C[i]&amp;&amp; C[i]();</span></span><br><span class="line"><span class="comment">             &#125;*/</span></span><br><span class="line">        &#125;)();</span><br><span class="line">    &#125;)()</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">formatString</span>(<span class="params">str,data</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> str.<span class="title function_">replace</span>(<span class="regexp">/\&#123;#(\w+)#\&#125;/g</span>,<span class="keyword">function</span>(<span class="params">match,key</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">typeof</span> data[key]===<span class="string">&#x27;undefined&#x27;</span>?<span class="string">&#x27;&#x27;</span>:data[key];</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="优点及应用"><a href="#优点及应用" class="headerlink" title="优点及应用"></a>优点及应用</h1><pre><code>    在大型页面系统中有利于工程化、模块化开发并管理代码，
+    便于大型页面系统 的可持续开发与维护，同时也是降低层次耦合提升代码复用的良好实践。
+    在复杂组件开发中，用MVC思想管理组件内部的层次也是很好的选择。 
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2016/11/03/designPattern/model-view-controller/" data-id="cm7rthhch00618sd1dmlmc5ku" data-title="MVC模式" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">架构型模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/11/03/designPattern/model-view-presenter/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          MVP模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/03/designPattern/widget/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Widget模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C#</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/HTML/">HTML</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PHP/">PHP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/github/">github</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E5%89%8D%E7%AB%AF/">大前端</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%A2%E6%88%B7%E7%AB%AFJS/">客户端JS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%A1%88%E4%BE%8B/">案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BE%85%E5%8A%A9/">辅助</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%9F%BA%E7%A1%80/" rel="tag">CSS基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%BA%94%E7%94%A8/" rel="tag">CSS应用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" rel="tag">CSS浏览器差异</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML%E6%A6%82%E8%BF%B0/" rel="tag">HTML概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-EE/" rel="tag">Java EE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-SE/" rel="tag">Java SE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPT/" rel="tag">PPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E5%9F%BA%E7%A1%80/" rel="tag">c#基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E9%AB%98%E7%BA%A7/" rel="tag">c#高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E5%9F%BA%E7%A1%80/" rel="tag">js基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E6%89%A9%E5%B1%95/" rel="tag">js扩展</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E7%89%B9%E6%80%A7/" rel="tag">js特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E9%AB%98%E7%BA%A7/" rel="tag">js高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E5%9F%BA%E7%A1%80/" rel="tag">linux基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E5%9F%BA%E7%A1%80/" rel="tag">php基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E6%A1%86%E6%9E%B6/" rel="tag">php框架</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E7%BC%93%E5%AD%98/" rel="tag">php缓存</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="tag">php面向对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%AB%98%E7%BA%A7/" rel="tag">php高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sshkey/" rel="tag">sshkey</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8B%E8%BD%BD/" rel="tag">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%8B%E7%BB%8D/" rel="tag">介绍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">创建型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%B7%E6%9C%BA/" rel="tag">刷机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E8%A3%85/" rel="tag">安装</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">技巧型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE/" rel="tag">数据</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" rel="tag">数据库安装与配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">架构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%87%E7%AD%BE/" rel="tag">标签</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E6%95%88/" rel="tag">特效</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%8F%E5%85%B8/" rel="tag">经典</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">结构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">行为型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" rel="tag">装机配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%AE%97/" rel="tag">运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%82%E9%85%8D/" rel="tag">适配</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CSS%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">CSS基础</a> <a href="/tags/CSS%E5%BA%94%E7%94%A8/" style="font-size: 10px;">CSS应用</a> <a href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" style="font-size: 11px;">CSS浏览器差异</a> <a href="/tags/HTML%E6%A6%82%E8%BF%B0/" style="font-size: 11px;">HTML概述</a> <a href="/tags/Java-EE/" style="font-size: 19px;">Java EE</a> <a href="/tags/Java-SE/" style="font-size: 20px;">Java SE</a> <a href="/tags/PPT/" style="font-size: 10px;">PPT</a> <a href="/tags/c-%E5%9F%BA%E7%A1%80/" style="font-size: 14px;">c#基础</a> <a href="/tags/c-%E9%AB%98%E7%BA%A7/" style="font-size: 13px;">c#高级</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/js%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">js基础</a> <a href="/tags/js%E6%89%A9%E5%B1%95/" style="font-size: 12px;">js扩展</a> <a href="/tags/js%E7%89%B9%E6%80%A7/" style="font-size: 10px;">js特性</a> <a href="/tags/js%E9%AB%98%E7%BA%A7/" style="font-size: 14px;">js高级</a> <a href="/tags/linux%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">linux基础</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/mysql/" style="font-size: 14px;">mysql</a> <a href="/tags/php%E5%9F%BA%E7%A1%80/" style="font-size: 17px;">php基础</a> <a href="/tags/php%E6%A1%86%E6%9E%B6/" style="font-size: 11px;">php框架</a> <a href="/tags/php%E7%BC%93%E5%AD%98/" style="font-size: 12px;">php缓存</a> <a href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 14px;">php面向对象</a> <a href="/tags/php%E9%AB%98%E7%BA%A7/" style="font-size: 20px;">php高级</a> <a href="/tags/spring/" style="font-size: 13px;">spring</a> <a href="/tags/sshkey/" style="font-size: 10px;">sshkey</a> <a href="/tags/%E4%B8%8B%E8%BD%BD/" style="font-size: 13px;">下载</a> <a href="/tags/%E4%BB%8B%E7%BB%8D/" style="font-size: 11px;">介绍</a> <a href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">创建型模式</a> <a href="/tags/%E5%88%B7%E6%9C%BA/" style="font-size: 10px;">刷机</a> <a href="/tags/%E5%AE%89%E8%A3%85/" style="font-size: 12px;">安装</a> <a href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 16px;">技巧型模式</a> <a href="/tags/%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">数据</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" style="font-size: 11px;">数据库安装与配置</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 11px;">服务器</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">架构型模式</a> <a href="/tags/%E6%A0%87%E7%AD%BE/" style="font-size: 14px;">标签</a> <a href="/tags/%E7%89%B9%E6%95%88/" style="font-size: 10px;">特效</a> <a href="/tags/%E7%BB%8F%E5%85%B8/" style="font-size: 12px;">经典</a> <a href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">结构型模式</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 18px;">行为型模式</a> <a href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">装机配置</a> <a href="/tags/%E8%BF%90%E7%AE%97/" style="font-size: 12px;">运算</a> <a href="/tags/%E9%80%82%E9%85%8D/" style="font-size: 10px;">适配</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/03/02/server/run-nodejs/">pm2启动nodejs项目</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/09/baseJS/variable-hoisting/">变量提升</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E9%9D%A2%E8%AF%95%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">面试中遇到的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E5%85%B6%E4%BB%96/">其他</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/16/java/JVM/">JVM简介</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

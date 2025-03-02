@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>JavaScript继承 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="JavaScript实现继承的方式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript继承">
+<meta property="og:url" content="http://example.com/2016/11/01/baseJS/inherit/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="JavaScript实现继承的方式。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/inherit-1.png">
+<meta property="og:image" content="http://example.com/images/inherit-2.png">
+<meta property="article:published_time" content="2016-11-01T10:40:18.000Z">
+<meta property="article:modified_time" content="2025-03-02T15:49:02.572Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="js高级">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/inherit-1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-baseJS/inherit" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/11/01/baseJS/inherit/" class="article-date">
+  <time class="dt-published" datetime="2016-11-01T10:40:18.000Z" itemprop="datePublished">2016-11-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%A2%E6%88%B7%E7%AB%AFJS/">客户端JS</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      JavaScript继承
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>JavaScript实现继承的方式。</p>
+</blockquote>
+<span id="more"></span>
+<h1 id="类式继承-通过原型链实现继承"><a href="#类式继承-通过原型链实现继承" class="headerlink" title="类式继承(通过原型链实现继承)"></a>类式继承(通过原型链实现继承)</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Parent</span>(<span class="params"></span>)&#123;                              <span class="comment">// 定义父类自有属性</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">pv</span> = <span class="string">&#x27;parent&#x27;</span>;    </span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">Parent</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">pp</span> = <span class="string">&#x27;ok&#x27;</span>;                     <span class="comment">// 定义父类原型属性和方法</span></span><br><span class="line"><span class="title class_">Parent</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">showParentValue</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">pv</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Child</span>(<span class="params"></span>)&#123;                               <span class="comment">// 定义子类自有属性</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cv</span> = <span class="string">&#x27;child&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">Child</span>.<span class="property"><span class="keyword">prototype</span></span> = <span class="keyword">new</span> <span class="title class_">Parent</span>();                 <span class="comment">// 继承父类</span></span><br><span class="line"><span class="title class_">Child</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">showChildValue</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;    <span class="comment">// 添加子类方法</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">cv</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    Child.prototype.showParentValue = fucntion()&#123;   // 重写继承来的方法</span></span><br><span class="line"><span class="comment">        console.log(&#x27;overwrite parent&#x27;); </span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">*/</span>    </span><br><span class="line"><span class="keyword">var</span>  c = <span class="keyword">new</span> <span class="title class_">Child</span>();                           <span class="comment">// 创建子类</span></span><br><span class="line">c.<span class="title function_">showChildValue</span>();                             <span class="comment">// 自身方法 </span></span><br><span class="line">c.<span class="title function_">showParentValue</span>();                            <span class="comment">// 继承来的方法</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(c.<span class="property">pp</span>);                              <span class="comment">// 继承来的属性</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>注意：不能在设定原型值后再重写（Json方式）原型</li>
+<li>缺陷<ul>
+<li>无法从子类构造器中调用父类构造器</li>
+<li>如果父类中有引用类型， 这个引用类型会添加到子类的原型中, 会在子类对象之间发生混淆（见上节原型创建对象）</li>
+</ul>
+</li>
+<li>内存图示意<br>  <img src="/images/inherit-1.png" alt="类式继承"></li>
+</ul>
+<h1 id="构造函数继承-基于函数伪造的方式实现继承"><a href="#构造函数继承-基于函数伪造的方式实现继承" class="headerlink" title="构造函数继承(基于函数伪造的方式实现继承)"></a>构造函数继承(基于函数伪造的方式实现继承)</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Parent</span>(<span class="params"> name</span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">color</span> = [<span class="string">&#x27;red&#x27;</span>,<span class="string">&#x27;blue&#x27;</span>];</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Chlid</span>(<span class="params"> name</span>)&#123;                   <span class="comment">//  可以把子类的构造参数传递到父类中</span></span><br><span class="line">    <span class="title class_">Parent</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>,name);              <span class="comment">// 当new出对象后this便指向了Child的对象, 从而改变了call的上下文</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> child1 = <span class="keyword">new</span> <span class="title class_">Chlid</span>(<span class="string">&#x27;Leon&#x27;</span>);</span><br><span class="line">child1.<span class="property">color</span>.<span class="title function_">push</span>(<span class="string">&#x27;green&#x27;</span>);         <span class="comment">// 仅仅是修改child1下color数组，不会修改原型, 避免了原型继承的问题</span></span><br><span class="line"><span class="keyword">var</span> child2 = <span class="keyword">new</span> <span class="title class_">Child</span>(<span class="string">&#x27;Lucy&#x27;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(child2.<span class="property">length</span>)          <span class="comment">// 输出2</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>该方式可以实现参数的向上传递及解决父类引用类型属性的问题,但依然有缺陷：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//如果父类中有方法的话，不会完成Child的原型指向Parent, 如以下定义后Child中并没有say方法</span></span><br><span class="line">            <span class="title class_">Parent</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">say</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">               <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">name</span>);</span><br><span class="line">            &#125;</span><br><span class="line"><span class="comment">//        但可以使用this来创建:</span></span><br><span class="line">            <span class="keyword">function</span> <span class="title function_">Parent</span>(<span class="params">name</span>)&#123;</span><br><span class="line">               <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">               <span class="variable language_">this</span>.<span class="property">say</span> =<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">                   <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">name</span>);</span><br><span class="line">                &#125;</span><br><span class="line">             &#125;</span><br><span class="line"><span class="comment">//        这样又会出现每一个Child 对象中都有say方法的一个拷贝,浪费空间。</span></span><br></pre></td></tr></table></figure>
+<h1 id="组合继承-基于原型和伪造的组合方式"><a href="#组合继承-基于原型和伪造的组合方式" class="headerlink" title="组合继承(基于原型和伪造的组合方式)"></a>组合继承(基于原型和伪造的组合方式)</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Parent</span>(<span class="params">name</span>)&#123;                                    <span class="comment">//该方式子类不是父类的实例，子类原型才是</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">color</span> = [<span class="string">&#x27;red&#x27;</span>,<span class="string">&#x27;blue&#x27;</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">Parent</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">ps</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">name</span>+<span class="string">&#x27; &#x27;</span>+<span class="variable language_">this</span>.<span class="property">color</span>.<span class="property">length</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Child</span>(<span class="params">name,age</span>)&#123;</span><br><span class="line">    <span class="title class_">Parent</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>,name);                              <span class="comment">// 属性通过伪造继承</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">age</span> = age;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">Child</span>.<span class="property"><span class="keyword">prototype</span></span> = <span class="keyword">new</span> <span class="title class_">Parent</span>();                         <span class="comment">// 方法通过原型继承</span></span><br><span class="line"><span class="title class_">Child</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">say</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">name</span>+<span class="string">&#x27; &#x27;</span>+<span class="variable language_">this</span>.<span class="property">age</span>+<span class="string">&#x27; &#x27;</span>+<span class="variable language_">this</span>.<span class="property">color</span>.<span class="property">length</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> c1 = <span class="keyword">new</span> <span class="title class_">Child</span>(<span class="string">&#x27;Leon&#x27;</span>,<span class="number">22</span>);</span><br><span class="line">cq.<span class="property">color</span>.<span class="title function_">push</span>(<span class="string">&#x27;green&#x27;</span>);                             <span class="comment">//  存储在对象空间，不会修改原型</span></span><br><span class="line"><span class="keyword">var</span> c2 = <span class="keyword">new</span> <span class="title class_">Child</span>(<span class="string">&#x27;Ada&#x27;</span>,<span class="number">23</span>);</span><br><span class="line">c2.<span class="title function_">say</span>();                                           <span class="comment">// color的长度依然是2</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>组合方式有效解决了参数传递及控制内存等问题是常见的继承模式.但父类的构造器会被调用两遍</li>
+<li>内存图示意<br>  <img src="/images/inherit-2.png" alt="组合继承"></li>
+</ul>
+<h1 id="原型式继承-基于封装的类式继承"><a href="#原型式继承-基于封装的类式继承" class="headerlink" title="原型式继承(基于封装的类式继承)"></a>原型式继承(基于封装的类式继承)</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">extend</span>(<span class="params">o</span>)&#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">F</span>(<span class="params"></span>)&#123;           <span class="comment">//声明一个过渡函数对象</span></span><br><span class="line">    &#125;</span><br><span class="line">    F.<span class="property"><span class="keyword">prototype</span></span> = o;        <span class="comment">//过渡对象的原型继承父对象</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title function_">F</span>();         <span class="comment">//返回过渡对象的实例，该实例的原型继承了父对象</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//与类式继承同样的缺点：</span></span><br><span class="line"><span class="keyword">var</span> book = &#123;                <span class="comment">//父类对象</span></span><br><span class="line">    <span class="attr">alike</span>:[<span class="string">&#x27;html&#x27;</span>,<span class="string">&#x27;css&#x27;</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> book1 = <span class="title function_">extend</span>(book);               <span class="comment">//继承自book</span></span><br><span class="line">book1.<span class="property">alike</span>.<span class="title function_">push</span>(<span class="string">&#x27;javascript&#x27;</span>);         <span class="comment">//为属性添加项</span></span><br><span class="line"><span class="comment">//console.log(book1.alike.length);</span></span><br><span class="line"><span class="keyword">var</span> book2 = <span class="title function_">extend</span>(book);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(book2.<span class="property">alike</span>.<span class="property">length</span>);        <span class="comment">//3  改变了其他对象的值</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(book.<span class="property">alike</span>.<span class="property">length</span>);          <span class="comment">//3   改变了父类对象的值</span></span><br></pre></td></tr></table></figure>
+<h1 id="寄生式继承-对原型式继承的第二次封装"><a href="#寄生式继承-对原型式继承的第二次封装" class="headerlink" title="寄生式继承(对原型式继承的第二次封装)"></a>寄生式继承(对原型式继承的第二次封装)</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">extend</span>(<span class="params">o</span>)&#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">F</span>(<span class="params"></span>)&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    F.<span class="property"><span class="keyword">prototype</span></span> = o;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title function_">F</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> book = &#123;</span><br><span class="line">    <span class="attr">alike</span>:[<span class="string">&#x27;html&#x27;</span>,<span class="string">&#x27;css&#x27;</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">create</span>(<span class="params">obj</span>)&#123;               <span class="comment">//只能说是原型式继承的升级版</span></span><br><span class="line">    <span class="keyword">var</span> o = <span class="keyword">new</span> <span class="title function_">extend</span>(obj);    <span class="comment">//通过原型继承方式创建新对象</span></span><br><span class="line">    o.<span class="property">getName</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;     <span class="comment">//拓展新对象</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> book1 = <span class="title function_">create</span>(book);       <span class="comment">//创建继承后的新对象，该方式只是拓展了继承后的功能，同样会有改变引用变量的问题</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="寄生组合式继承-基于寄生式继承和构造函数"><a href="#寄生组合式继承-基于寄生式继承和构造函数" class="headerlink" title="寄生组合式继承(基于寄生式继承和构造函数)"></a>寄生组合式继承(基于寄生式继承和构造函数)</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">extend</span>(<span class="params">o</span>)&#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">F</span>(<span class="params"></span>)&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    F.<span class="property"><span class="keyword">prototype</span></span> = o;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title function_">F</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">extendCreate</span>(<span class="params">subClass,superClass</span>)&#123;    <span class="comment">//拿到父类原型new出一个对象，修正构造器指向在赋给子类原型</span></span><br><span class="line">    <span class="keyword">var</span> p = <span class="title function_">extend</span>(superClass.<span class="property"><span class="keyword">prototype</span></span>);           <span class="comment">//复制一份父类原型的副本在extend函数中相当于F.prototype = o.prototype</span></span><br><span class="line">    p.<span class="property">constructor</span> = subClass;                       <span class="comment">//因为重写原型导致constructor指向发生了修改</span></span><br><span class="line">    subClass.<span class="property"><span class="keyword">prototype</span></span> = p;                         <span class="comment">//设置子类原型</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> <span class="title class_">SuperClass</span> = <span class="keyword">function</span>(<span class="params">name</span>)&#123;            <span class="comment">//定义父类</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name;                               <span class="comment">//构造属性</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">colors</span> = [<span class="string">&#x27;red&#x27;</span>,<span class="string">&#x27;blue&#x27;</span>,<span class="string">&#x27;green&#x27;</span>]           <span class="comment">//引用类型属性</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">SuperClass</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">getName</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;  <span class="comment">//定义父类原型方法</span></span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">name</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> <span class="title class_">SubClass</span> = <span class="keyword">function</span>(<span class="params">name,time</span>)&#123;          <span class="comment">//定义子类</span></span><br><span class="line">    <span class="title class_">SuperClass</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>,name);                    <span class="comment">//构造函数式继承</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">time</span> = time;                                      <span class="comment">//子类新增属性</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">extendCreate</span>(<span class="title class_">SubClass</span>,<span class="title class_">SuperClass</span>);</span><br><span class="line"><span class="title class_">SubClass</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">getTime</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;       <span class="comment">//子类新增原型方法，不能放在extendCreate之前，因为extendCreate会重写子类原型</span></span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">time</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> sub1 = <span class="keyword">new</span> <span class="title class_">SubClass</span>(<span class="string">&#x27;java&#x27;</span>,<span class="number">2014</span>);</span><br><span class="line"><span class="keyword">var</span> sub2 = <span class="keyword">new</span> <span class="title class_">SubClass</span>(<span class="string">&#x27;javascript&#x27;</span>,<span class="number">2013</span>);</span><br><span class="line">sub1.<span class="property">colors</span>.<span class="title function_">push</span>(<span class="string">&#x27;black&#x27;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(sub2.<span class="property">colors</span>.<span class="property">length</span>);                     <span class="comment">//3   改变sub1的引用类型不会影响sub2,这是因为基于构造函数的继承</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(sub1.<span class="title function_">getName</span>());                                <span class="comment">//java    继承自父类的方法</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(sub1.<span class="title function_">getTime</span>());                                 <span class="comment">//2014    自己的原型方法</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(sub1 <span class="keyword">instanceof</span> <span class="title class_">SubClass</span>);                <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(sub1 <span class="keyword">instanceof</span> <span class="title class_">SuperClass</span>);             <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">SubClass</span> <span class="keyword">instanceof</span> <span class="title class_">SuperClass</span>);     <span class="comment">//false</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">SubClass</span>.<span class="property"><span class="keyword">prototype</span></span> <span class="keyword">instanceof</span> <span class="title class_">SuperClass</span>);             <span class="comment">//true,因为extend return new F();</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>这样父类构造函数就只会执行一次，这种方式是比较理想的。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2016/11/01/baseJS/inherit/" data-id="cm7rthhb900188sd12sfq589e" data-title="JavaScript继承" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/js%E9%AB%98%E7%BA%A7/" rel="tag">js高级</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/11/01/baseJS/closure/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          JavaScript闭包
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/01/baseJS/object/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">JavaScript对象</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C#</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/HTML/">HTML</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PHP/">PHP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/github/">github</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E5%89%8D%E7%AB%AF/">大前端</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%A2%E6%88%B7%E7%AB%AFJS/">客户端JS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%A1%88%E4%BE%8B/">案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BE%85%E5%8A%A9/">辅助</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%9F%BA%E7%A1%80/" rel="tag">CSS基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%BA%94%E7%94%A8/" rel="tag">CSS应用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" rel="tag">CSS浏览器差异</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML%E6%A6%82%E8%BF%B0/" rel="tag">HTML概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-EE/" rel="tag">Java EE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-SE/" rel="tag">Java SE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPT/" rel="tag">PPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E5%9F%BA%E7%A1%80/" rel="tag">c#基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E9%AB%98%E7%BA%A7/" rel="tag">c#高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E5%9F%BA%E7%A1%80/" rel="tag">js基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E6%89%A9%E5%B1%95/" rel="tag">js扩展</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E7%89%B9%E6%80%A7/" rel="tag">js特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E9%AB%98%E7%BA%A7/" rel="tag">js高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E5%9F%BA%E7%A1%80/" rel="tag">linux基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E5%9F%BA%E7%A1%80/" rel="tag">php基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E6%A1%86%E6%9E%B6/" rel="tag">php框架</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E7%BC%93%E5%AD%98/" rel="tag">php缓存</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="tag">php面向对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%AB%98%E7%BA%A7/" rel="tag">php高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sshkey/" rel="tag">sshkey</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8B%E8%BD%BD/" rel="tag">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%8B%E7%BB%8D/" rel="tag">介绍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">创建型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%B7%E6%9C%BA/" rel="tag">刷机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E8%A3%85/" rel="tag">安装</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">技巧型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE/" rel="tag">数据</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" rel="tag">数据库安装与配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">架构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%87%E7%AD%BE/" rel="tag">标签</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E6%95%88/" rel="tag">特效</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%8F%E5%85%B8/" rel="tag">经典</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">结构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">行为型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" rel="tag">装机配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%AE%97/" rel="tag">运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%82%E9%85%8D/" rel="tag">适配</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CSS%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">CSS基础</a> <a href="/tags/CSS%E5%BA%94%E7%94%A8/" style="font-size: 10px;">CSS应用</a> <a href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" style="font-size: 11px;">CSS浏览器差异</a> <a href="/tags/HTML%E6%A6%82%E8%BF%B0/" style="font-size: 11px;">HTML概述</a> <a href="/tags/Java-EE/" style="font-size: 19px;">Java EE</a> <a href="/tags/Java-SE/" style="font-size: 20px;">Java SE</a> <a href="/tags/PPT/" style="font-size: 10px;">PPT</a> <a href="/tags/c-%E5%9F%BA%E7%A1%80/" style="font-size: 14px;">c#基础</a> <a href="/tags/c-%E9%AB%98%E7%BA%A7/" style="font-size: 13px;">c#高级</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/js%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">js基础</a> <a href="/tags/js%E6%89%A9%E5%B1%95/" style="font-size: 12px;">js扩展</a> <a href="/tags/js%E7%89%B9%E6%80%A7/" style="font-size: 10px;">js特性</a> <a href="/tags/js%E9%AB%98%E7%BA%A7/" style="font-size: 14px;">js高级</a> <a href="/tags/linux%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">linux基础</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/mysql/" style="font-size: 14px;">mysql</a> <a href="/tags/php%E5%9F%BA%E7%A1%80/" style="font-size: 17px;">php基础</a> <a href="/tags/php%E6%A1%86%E6%9E%B6/" style="font-size: 11px;">php框架</a> <a href="/tags/php%E7%BC%93%E5%AD%98/" style="font-size: 12px;">php缓存</a> <a href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 14px;">php面向对象</a> <a href="/tags/php%E9%AB%98%E7%BA%A7/" style="font-size: 20px;">php高级</a> <a href="/tags/spring/" style="font-size: 13px;">spring</a> <a href="/tags/sshkey/" style="font-size: 10px;">sshkey</a> <a href="/tags/%E4%B8%8B%E8%BD%BD/" style="font-size: 13px;">下载</a> <a href="/tags/%E4%BB%8B%E7%BB%8D/" style="font-size: 11px;">介绍</a> <a href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">创建型模式</a> <a href="/tags/%E5%88%B7%E6%9C%BA/" style="font-size: 10px;">刷机</a> <a href="/tags/%E5%AE%89%E8%A3%85/" style="font-size: 12px;">安装</a> <a href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 16px;">技巧型模式</a> <a href="/tags/%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">数据</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" style="font-size: 11px;">数据库安装与配置</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 11px;">服务器</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">架构型模式</a> <a href="/tags/%E6%A0%87%E7%AD%BE/" style="font-size: 14px;">标签</a> <a href="/tags/%E7%89%B9%E6%95%88/" style="font-size: 10px;">特效</a> <a href="/tags/%E7%BB%8F%E5%85%B8/" style="font-size: 12px;">经典</a> <a href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">结构型模式</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 18px;">行为型模式</a> <a href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">装机配置</a> <a href="/tags/%E8%BF%90%E7%AE%97/" style="font-size: 12px;">运算</a> <a href="/tags/%E9%80%82%E9%85%8D/" style="font-size: 10px;">适配</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/03/02/server/run-nodejs/">pm2启动nodejs项目</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/09/baseJS/variable-hoisting/">变量提升</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E9%9D%A2%E8%AF%95%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">面试中遇到的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E5%85%B6%E4%BB%96/">其他</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/16/java/JVM/">JVM简介</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

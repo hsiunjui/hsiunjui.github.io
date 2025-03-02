@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>PHP操作Redis | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="PHP对Redis缓存操作的一些API.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP操作Redis">
+<meta property="og:url" content="http://example.com/2020/03/16/php/30.PHP%E6%93%8D%E4%BD%9CRedis/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="PHP对Redis缓存操作的一些API.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-03-16T12:51:26.000Z">
+<meta property="article:modified_time" content="2025-03-02T15:49:02.637Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="php面向对象">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-php/30.PHP操作Redis" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/03/16/php/30.PHP%E6%93%8D%E4%BD%9CRedis/" class="article-date">
+  <time class="dt-published" datetime="2020-03-16T12:51:26.000Z" itemprop="datePublished">2020-03-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      PHP操作Redis
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>PHP对Redis缓存操作的一些API.</p>
+</blockquote>
+<span id="more"></span>
+<h1 id="PHP安装Redis扩展-window"><a href="#PHP安装Redis扩展-window" class="headerlink" title="PHP安装Redis扩展(window)"></a>PHP安装Redis扩展(window)</h1><ul>
+<li>windows环境<ul>
+<li><a href="pecl.php.net/package/redis/3.1.5/windows">获取资源</a></li>
+<li>解压并复制php-redis.dll,php-redis.pdb到ext</li>
+<li>修改php.ini</li>
+</ul>
+</li>
+<li>lamp环境<ul>
+<li>wget <a target="_blank" rel="noopener" href="http://pecl.php.net/get/redis-3.1.6.tgz">获取资源</a></li>
+<li>安装<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">    tar zxf redis-3.1.6.tgz &amp;&amp; <span class="built_in">cd</span> redis-3.1.6</span><br><span class="line">    phpize <span class="comment"># yun install autoconf,或者是全路劲</span></span><br><span class="line">    ./configre --with-php-config=/opt/app/php7/bin/php-config</span><br><span class="line">    make &amp;&amp; make install</span><br><span class="line">    ``</span><br><span class="line">  * 修改php.ini(extension=redis.so)  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># PHP连接Redis</span></span><br><span class="line">```php</span><br><span class="line"><span class="variable">$redis</span> = new Redis(); // servic iptables stop关闭防火墙或修改redis.conf中的<span class="built_in">bind</span>值</span><br><span class="line"><span class="variable">$redis</span>-&gt;connect(<span class="string">&#x27;192.168.1.3&#x27;</span>,6379);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h1 id="相关API"><a href="#相关API" class="headerlink" title="相关API"></a>相关API</h1><ul>
+<li>字符型(String)  <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">set</span>(<span class="variable">$key</span>, <span class="variable">$value</span>); <span class="comment">// 存</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">get</span>(<span class="variable">$key</span>); <span class="comment">// 取</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">del</span>(<span class="variable">$key</span>); <span class="comment">// 删除</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">exists</span>(<span class="variable">$key</span>); <span class="comment">// 是否存在</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">setnx</span>(<span class="variable">$key</span>, <span class="variable">$value</span>); <span class="comment">// set when not exists</span></span><br><span class="line"><span class="comment">// 键名一般按模块大小来设计,以冒号分隔,如 module:age</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">incrBy</span>(<span class="variable">$key</span>, <span class="variable">$step</span>); <span class="comment">// 自增</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">decrBy</span>(<span class="variable">$key</span>, <span class="variable">$step</span>); <span class="comment">// 自减</span></span><br></pre></td></tr></table></figure></li>
+<li>哈希散列(Hash)<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">hSet</span>(<span class="keyword">var</span>, <span class="variable">$key</span>, <span class="variable">$value</span>); <span class="comment">// 存 var表示是哪个hash</span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">hGet</span>(<span class="keyword">var</span>, <span class="variable">$key</span>); <span class="comment">// 取</span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">hDel</span>(<span class="keyword">var</span>, <span class="variable">$key</span>); <span class="comment">// 删除</span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">hExists</span>(<span class="keyword">var</span>, <span class="variable">$key</span>); <span class="comment">// 是否存在</span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">hSetnx</span>(<span class="keyword">var</span>, <span class="variable">$key</span>, <span class="variable">$value</span>); <span class="comment">// set when not exists</span></span><br><span class="line">  ```  </span><br><span class="line">- 列表型(List)</span><br><span class="line">  ```php</span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">lSet</span>(<span class="variable">$key</span>, <span class="variable">$index</span>,<span class="variable">$value</span>); <span class="comment">// 给指定索引赋值</span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">lLen</span>(<span class="variable">$key</span>); <span class="comment">// 长度</span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">lRange</span>(<span class="variable">$key</span>,<span class="variable">$start</span>,<span class="variable">$end</span>); <span class="comment">// 从数组里拿出一个子数组</span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">lTrim</span>(<span class="variable">$key</span>,<span class="variable">$start</span>,<span class="variable">$end</span>); <span class="comment">// 会改变原数组 </span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">lPush</span>(<span class="variable">$key</span>,<span class="variable">$value</span>); <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">rPush</span>(<span class="variable">$key</span>,<span class="variable">$value</span>); <span class="comment">// 左/右压入</span></span><br><span class="line">    <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">lPop</span>(<span class="variable">$key</span>); <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">rPop</span>(<span class="variable">$key</span>); <span class="comment">// 左/右弹出</span></span><br></pre></td></tr></table></figure></li>
+<li>集合型(Set); list有序的,可以通过下标取值;set是无序的,且值不重复,无法通过下标取得值<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">sAdd</span>(<span class="variable">$key</span>, <span class="variable">$value</span>);</span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">sMembers</span>(<span class="variable">$key</span>); <span class="comment">// 返回时一个数组,但下标不能取值</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">sCard</span>(<span class="variable">$key</span>); <span class="comment">// 集合的长度</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">sPop</span>(<span class="variable">$key</span>); <span class="comment">// 从集合里随机拿一个,会改变集合</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">sDiff</span>(<span class="variable">$key</span>, <span class="variable">$key2</span>); <span class="comment">// 集合求差集,一个一个比</span></span><br></pre></td></tr></table></figure></li>
+<li>有序集合(Zset),同Set,但每个元素都会关联一个double类型的分数,且分数可以重复<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">zAdd</span>(<span class="variable">$key</span>,<span class="variable">$score</span>, <span class="variable">$value</span>); <span class="comment">// 添加或者修改</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">zRem</span>(<span class="variable">$key</span>,<span class="variable">$value</span>); <span class="comment">// 移除一个或多个成员</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">zCard</span>(<span class="variable">$key</span>); <span class="comment">// 获取有序集合的成员数</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">zCount</span>(<span class="variable">$key</span>,<span class="variable">$score1</span>, <span class="variable">$score2</span>); <span class="comment">// 指定区间分数的长度</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">zScore</span>(<span class="variable">$key</span>, <span class="variable">$value</span>); <span class="comment">// 返回成员分数值</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">zRank</span>(<span class="variable">$key</span>, <span class="variable">$value</span>); <span class="comment">// 返回指定成员的索引</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">zRevrank</span>(<span class="variable">$key</span>, <span class="variable">$start</span>, <span class="variable">$end</span>); <span class="comment">// 返回指定区间内成员,通过索引分数由高到低</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="Redis消息队列"><a href="#Redis消息队列" class="headerlink" title="Redis消息队列"></a>Redis消息队列</h1><p>消息队列是指消息的顺序集合。如pv统计中,大量用户访问页面时,都去请求redis,在redis中rpush pvlog,然后再用脚本匀速处理pvlog(即异步处理)。  </p>
+<ul>
+<li>其主要应用：<ul>
+<li>应对流量峰值 </li>
+<li>异步消费(不定速插入,生产和匀速处理,消费)</li>
+<li>解耦应用(不同来源的生产和不同去向的消费)</li>
+</ul>
+</li>
+<li>实现方式<ul>
+<li>基于list<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$redis</span>-<span class="title function_ invoke__">rPush</span>(<span class="variable">$key</span>, <span class="number">1</span>); <span class="comment">// 生产,从右边压栈</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>) &#123; <span class="comment">// 读,从左边弹栈</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">false</span> !== <span class="variable">$redis</span>.<span class="title function_ invoke__">lPop</span>(<span class="variable">$key</span>)) &#123;</span><br><span class="line">        <span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">incrBy</span>(<span class="string">&#x27;pv&#x27;</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// pv也可以使用set, incrBy方法,但千万级别的会受限</span></span><br><span class="line"><span class="comment">// redis的容量决定业务承载能力</span></span><br><span class="line"><span class="comment">// 每条信息只能被一个消费者消费</span></span><br><span class="line"><span class="comment">// 生产的信息要全部消费掉,处理失败的消息要容错</span></span><br></pre></td></tr></table></figure></li>
+<li>基于publish&#x2F;subscribe<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">subscribe</span>([<span class="variable">$channel1</span>,<span class="variable">$channel2</span>,...], function(<span class="variable">$redis</span>,<span class="variable">$channel</span>,<span class="variable">$message</span>)&#123;&#125;); <span class="comment">// 订阅者</span></span><br><span class="line"><span class="variable">$redis</span>-&gt;<span class="title function_ invoke__">publish</span>(<span class="variable">$channel1</span>, <span class="variable">$message</span>); <span class="comment">//发布者</span></span><br><span class="line"><span class="comment">// 监听者和发布者可以时一对一，一对多，多对多的关系</span></span><br><span class="line"><span class="comment">// $redis一旦进入监听状态,就只能进行订阅,取消订阅等操作,如果回调函数数要操作redis的其他内容，只能重新初始化一个redis</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/03/16/php/30.PHP%E6%93%8D%E4%BD%9CRedis/" data-id="cm7rthheo00eu8sd1c5g1613b" data-title="PHP操作Redis" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="tag">php面向对象</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/03/16/php/3.PHP%E5%8F%98%E9%87%8F/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          PHP的变量
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/03/16/php/31.HTTP%E5%8D%8F%E8%AE%AE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">PHP之HTTP</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C#</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/HTML/">HTML</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PHP/">PHP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/github/">github</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E5%89%8D%E7%AB%AF/">大前端</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%A2%E6%88%B7%E7%AB%AFJS/">客户端JS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%A1%88%E4%BE%8B/">案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BE%85%E5%8A%A9/">辅助</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%9F%BA%E7%A1%80/" rel="tag">CSS基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%BA%94%E7%94%A8/" rel="tag">CSS应用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" rel="tag">CSS浏览器差异</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML%E6%A6%82%E8%BF%B0/" rel="tag">HTML概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-EE/" rel="tag">Java EE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-SE/" rel="tag">Java SE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPT/" rel="tag">PPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E5%9F%BA%E7%A1%80/" rel="tag">c#基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E9%AB%98%E7%BA%A7/" rel="tag">c#高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E5%9F%BA%E7%A1%80/" rel="tag">js基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E6%89%A9%E5%B1%95/" rel="tag">js扩展</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E7%89%B9%E6%80%A7/" rel="tag">js特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E9%AB%98%E7%BA%A7/" rel="tag">js高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E5%9F%BA%E7%A1%80/" rel="tag">linux基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E5%9F%BA%E7%A1%80/" rel="tag">php基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E6%A1%86%E6%9E%B6/" rel="tag">php框架</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E7%BC%93%E5%AD%98/" rel="tag">php缓存</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="tag">php面向对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%AB%98%E7%BA%A7/" rel="tag">php高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sshkey/" rel="tag">sshkey</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8B%E8%BD%BD/" rel="tag">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%8B%E7%BB%8D/" rel="tag">介绍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">创建型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%B7%E6%9C%BA/" rel="tag">刷机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E8%A3%85/" rel="tag">安装</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">技巧型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE/" rel="tag">数据</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" rel="tag">数据库安装与配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">架构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%87%E7%AD%BE/" rel="tag">标签</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E6%95%88/" rel="tag">特效</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%8F%E5%85%B8/" rel="tag">经典</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">结构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">行为型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" rel="tag">装机配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%AE%97/" rel="tag">运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%82%E9%85%8D/" rel="tag">适配</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CSS%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">CSS基础</a> <a href="/tags/CSS%E5%BA%94%E7%94%A8/" style="font-size: 10px;">CSS应用</a> <a href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" style="font-size: 11px;">CSS浏览器差异</a> <a href="/tags/HTML%E6%A6%82%E8%BF%B0/" style="font-size: 11px;">HTML概述</a> <a href="/tags/Java-EE/" style="font-size: 19px;">Java EE</a> <a href="/tags/Java-SE/" style="font-size: 20px;">Java SE</a> <a href="/tags/PPT/" style="font-size: 10px;">PPT</a> <a href="/tags/c-%E5%9F%BA%E7%A1%80/" style="font-size: 14px;">c#基础</a> <a href="/tags/c-%E9%AB%98%E7%BA%A7/" style="font-size: 13px;">c#高级</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/js%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">js基础</a> <a href="/tags/js%E6%89%A9%E5%B1%95/" style="font-size: 12px;">js扩展</a> <a href="/tags/js%E7%89%B9%E6%80%A7/" style="font-size: 10px;">js特性</a> <a href="/tags/js%E9%AB%98%E7%BA%A7/" style="font-size: 14px;">js高级</a> <a href="/tags/linux%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">linux基础</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/mysql/" style="font-size: 14px;">mysql</a> <a href="/tags/php%E5%9F%BA%E7%A1%80/" style="font-size: 17px;">php基础</a> <a href="/tags/php%E6%A1%86%E6%9E%B6/" style="font-size: 11px;">php框架</a> <a href="/tags/php%E7%BC%93%E5%AD%98/" style="font-size: 12px;">php缓存</a> <a href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 14px;">php面向对象</a> <a href="/tags/php%E9%AB%98%E7%BA%A7/" style="font-size: 20px;">php高级</a> <a href="/tags/spring/" style="font-size: 13px;">spring</a> <a href="/tags/sshkey/" style="font-size: 10px;">sshkey</a> <a href="/tags/%E4%B8%8B%E8%BD%BD/" style="font-size: 13px;">下载</a> <a href="/tags/%E4%BB%8B%E7%BB%8D/" style="font-size: 11px;">介绍</a> <a href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">创建型模式</a> <a href="/tags/%E5%88%B7%E6%9C%BA/" style="font-size: 10px;">刷机</a> <a href="/tags/%E5%AE%89%E8%A3%85/" style="font-size: 12px;">安装</a> <a href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 16px;">技巧型模式</a> <a href="/tags/%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">数据</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" style="font-size: 11px;">数据库安装与配置</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 11px;">服务器</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">架构型模式</a> <a href="/tags/%E6%A0%87%E7%AD%BE/" style="font-size: 14px;">标签</a> <a href="/tags/%E7%89%B9%E6%95%88/" style="font-size: 10px;">特效</a> <a href="/tags/%E7%BB%8F%E5%85%B8/" style="font-size: 12px;">经典</a> <a href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">结构型模式</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 18px;">行为型模式</a> <a href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">装机配置</a> <a href="/tags/%E8%BF%90%E7%AE%97/" style="font-size: 12px;">运算</a> <a href="/tags/%E9%80%82%E9%85%8D/" style="font-size: 10px;">适配</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/03/02/server/run-nodejs/">pm2启动nodejs项目</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/09/baseJS/variable-hoisting/">变量提升</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E9%9D%A2%E8%AF%95%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">面试中遇到的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E5%85%B6%E4%BB%96/">其他</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/16/java/JVM/">JVM简介</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

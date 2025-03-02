@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>模板方法模式 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="父类中定义一组操作算法骨架，而将一些实现步骤延迟到子类中，使得子类可以不改变父类的算法结构的同时可以重新定义算法中某些实现步骤(个人感觉更有继承的韵味)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模板方法模式">
+<meta property="og:url" content="http://example.com/2016/11/03/designPattern/template-method/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="父类中定义一组操作算法骨架，而将一些实现步骤延迟到子类中，使得子类可以不改变父类的算法结构的同时可以重新定义算法中某些实现步骤(个人感觉更有继承的韵味)。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2016-11-03T08:11:40.000Z">
+<meta property="article:modified_time" content="2025-03-02T15:49:02.607Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="行为型模式">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-designPattern/template-method" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/11/03/designPattern/template-method/" class="article-date">
+  <time class="dt-published" datetime="2016-11-03T08:11:40.000Z" itemprop="datePublished">2016-11-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      模板方法模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>父类中定义一组操作算法骨架，而将一些实现步骤延迟到子类中，使得子类可以不改变父类的算法结构的同时可以重新定义算法中某些实现步骤(个人感觉更有继承的韵味)。</p>
+</blockquote>
+<span id="more"></span>
+<h1 id="创建弹框"><a href="#创建弹框" class="headerlink" title="创建弹框"></a>创建弹框</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//模板类  基础提示框 data渲染数据</span></span><br><span class="line"><span class="keyword">var</span> <span class="title class_">Alert</span> = <span class="keyword">function</span> (<span class="params">data</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!data) &#123;                                          <span class="comment">//没有传入数据，就返回</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">content</span> = data.<span class="property">content</span>;                                             <span class="comment">//设置内容</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">panel</span> = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;div&#x27;</span>);                 <span class="comment">//创建提示面板</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">contentNode</span> = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;p&#x27;</span>);        <span class="comment">//创建提示内容组件</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">confirmBtn</span> = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;span&#x27;</span>);     <span class="comment">//创建确定按钮组件</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">closeBtn</span> = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;b&#x27;</span>);             <span class="comment">//创建关闭按钮组件</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">panel</span>.<span class="property">className</span> = <span class="string">&#x27;alert&#x27;</span>;                                         <span class="comment">//为提示框按钮添加样式</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">confirmBtn</span>.<span class="property">className</span> = <span class="string">&#x27;a-confirm&#x27;</span>;                        <span class="comment">//为确定按钮添加样式</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">closeBtn</span>.<span class="property">className</span> = <span class="string">&#x27;a-close&#x27;</span>;                               <span class="comment">//我关闭按钮添加样式</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">confirmBtn</span>.<span class="property">innerHTML</span> = data.<span class="property">confirm</span> || <span class="string">&#x27;确定&#x27;</span>;             <span class="comment">//为确定按钮添加文案</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">contentNode</span>.<span class="property">innerHTML</span> = <span class="variable language_">this</span>.<span class="property">content</span>;                       <span class="comment">//为提示内容添加文本</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">success</span> = data.<span class="property">success</span> || <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        &#125;;                                                                    <span class="comment">//点击确定按钮执行的方法</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">fail</span> = data.<span class="property">fail</span> || <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        &#125;;                                                                   <span class="comment">//点击关闭按钮执行的方法</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//模板类原型方法</span></span><br><span class="line"><span class="title class_">Alert</span>.<span class="property"><span class="keyword">prototype</span></span> = &#123;</span><br><span class="line">    <span class="attr">constructor</span>: <span class="title class_">Alert</span>,</span><br><span class="line">    <span class="attr">init</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">panel</span>.<span class="title function_">appendChild</span>(<span class="variable language_">this</span>.<span class="property">contentNode</span>);           <span class="comment">//生成提示框</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">panel</span>.<span class="title function_">appendChild</span>(<span class="variable language_">this</span>.<span class="property">closeBtn</span>);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">panel</span>.<span class="title function_">appendChild</span>(<span class="variable language_">this</span>.<span class="property">confirmBtn</span>);</span><br><span class="line">        <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(<span class="variable language_">this</span>.<span class="property">panel</span>);              <span class="comment">//插入页面中</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="title function_">bindEvent</span>();                                       <span class="comment">//绑定事件</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="title function_">show</span>();                                              <span class="comment">//显示提示框</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">bindEvent</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> that = <span class="variable language_">this</span>;                                                <span class="comment">//缓存对象</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">closeBtn</span>.<span class="property">onclick</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;                     <span class="comment">//点击关闭按钮事件</span></span><br><span class="line">            that.<span class="title function_">fail</span>();                                    <span class="comment">//执行关闭取消方法</span></span><br><span class="line">            that.<span class="title function_">hide</span>();                                 <span class="comment">//隐藏弹层</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">confirmBtn</span>.<span class="property">onclick</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;                  <span class="comment">//点击确认按钮事件</span></span><br><span class="line">            that.<span class="title function_">success</span>();                          <span class="comment">//执行关闭确认方法</span></span><br><span class="line">            that.<span class="title function_">hide</span>();                                <span class="comment">//隐藏弹层</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">hide</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;                                        <span class="comment">//隐藏弹层</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">panel</span>.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;none&#x27;</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">show</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;                                      <span class="comment">//显示弹层</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">panel</span>.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;block&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/****拓展弹层类型******/</span></span><br><span class="line"><span class="comment">//右侧按钮提示框</span></span><br><span class="line"><span class="keyword">var</span> <span class="title class_">RightAlert</span> = <span class="keyword">function</span> (<span class="params">data</span>) &#123;</span><br><span class="line">    <span class="title class_">Alert</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>, data);                              <span class="comment">//继承提示框构造函数</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">confirmBtn</span>.<span class="property">className</span> = <span class="variable language_">this</span>.<span class="property">confirmBtn</span>.<span class="property">className</span> + <span class="string">&#x27; right&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">RightAlert</span>.<span class="property"><span class="keyword">prototype</span></span> = <span class="keyword">new</span> <span class="title class_">Alert</span>();           <span class="comment">//继承基本提示框方法</span></span><br><span class="line"><span class="comment">//标题提示框</span></span><br><span class="line"><span class="keyword">var</span> <span class="title class_">TitleAlert</span> = <span class="keyword">function</span> (<span class="params">data</span>) &#123;</span><br><span class="line">    <span class="title class_">Alert</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>, data);                 <span class="comment">//继承提示框构造函数</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">title</span> = data.<span class="property">title</span>;                  <span class="comment">//设置标题内容</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">titleNode</span> = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;h3&#x27;</span>);      <span class="comment">//创建标题组件</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">titleNode</span>.<span class="property">innerHTML</span> = <span class="variable language_">this</span>.<span class="property">title</span>;                       <span class="comment">//将标题内容写入标题组件</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">TitleAlert</span>.<span class="property"><span class="keyword">prototype</span></span> = <span class="keyword">new</span> <span class="title class_">Alert</span>();              <span class="comment">//继承基本提示框方法</span></span><br><span class="line"><span class="title class_">TitleAlert</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">init</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;                  <span class="comment">//重写init方法</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">panel</span>.<span class="title function_">insertBefore</span>(<span class="variable language_">this</span>.<span class="property">titleNode</span>,<span class="variable language_">this</span>.<span class="property">panel</span>.<span class="property">firstChild</span>);      <span class="comment">//添加标题组件</span></span><br><span class="line">    <span class="title class_">Alert</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">init</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>);                                                    <span class="comment">//继承基本提示框的init方法</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//用继承类作为模板类，创建带有取消按钮的标题提示框</span></span><br><span class="line"><span class="keyword">var</span> <span class="title class_">CancelAlert</span> = <span class="keyword">function</span>(<span class="params">data</span>)&#123;</span><br><span class="line">    <span class="title class_">TitleAlert</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>,data);                         <span class="comment">//继承标题提示框构造函数</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cancel</span> = data.<span class="property">cancel</span>;                                                   <span class="comment">//取消按钮文案</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cancelBtn</span> = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;span&#x27;</span>);            <span class="comment">//创建取消组件</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cancelBtn</span>.<span class="property">className</span> = <span class="string">&#x27;cancel&#x27;</span>;                                 <span class="comment">//取消按钮样式</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cancelBtn</span>.<span class="property">innerHTML</span> = <span class="variable language_">this</span>.<span class="property">cancel</span> || <span class="string">&#x27;取消&#x27;</span>;               <span class="comment">//取消按钮文案</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">CancelAlert</span>.<span class="property"><span class="keyword">prototype</span></span> = <span class="keyword">new</span> <span class="title class_">Alert</span>();                <span class="comment">//继承基本提示框原型方法</span></span><br><span class="line"><span class="title class_">CancelAlert</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">init</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="title class_">TitleAlert</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">init</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>);                   <span class="comment">//继承标题提示框的init方法</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">panel</span>.<span class="title function_">appendChild</span>(<span class="variable language_">this</span>.<span class="property">cancelBtn</span>);       <span class="comment">//添加到提示面板末尾</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">CancelAlert</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">bindEvent</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">var</span> that = <span class="variable language_">this</span>;</span><br><span class="line">    <span class="title class_">TitleAlert</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">bindEvent</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>);              <span class="comment">//继承bindEvent方法</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cancelBtn</span>.<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        that.<span class="title function_">fail</span>();                           <span class="comment">//执行取消回调函数</span></span><br><span class="line">        that.<span class="title function_">hide</span>();                         <span class="comment">//隐藏提示框</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实例调用</span></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">CancelAlert</span>(&#123;                   <span class="comment">//传入对象，并初始化</span></span><br><span class="line">    <span class="attr">title</span>:<span class="string">&#x27;提示标题&#x27;</span>,</span><br><span class="line">    <span class="attr">content</span>:<span class="string">&#x27;提示内容&#x27;</span>,</span><br><span class="line">    <span class="attr">success</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;ok&#x27;</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">fail</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;cancel&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).<span class="title function_">init</span>();</span><br></pre></td></tr></table></figure>
+
+<h1 id="创建多类型导航"><a href="#创建多类型导航" class="headerlink" title="创建多类型导航"></a>创建多类型导航</h1><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;content&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">function</span> <span class="title function_">formatString</span>(<span class="params">str, data</span>) &#123;                                             <span class="comment">//格式化字符串方法</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">return</span> str.<span class="title function_">replace</span>(<span class="regexp">/\&#123;#(\w+)#\&#125;/g</span>, <span class="keyword">function</span> (<span class="params">match, key</span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="keyword">return</span> <span class="keyword">typeof</span> data[key] === <span class="string">&#x27;undefined&#x27;</span> ? <span class="string">&#x27;&#x27;</span> : data[key];</span></span><br><span class="line"><span class="language-javascript">        &#125;)</span></span><br><span class="line"><span class="language-javascript">    &#125;</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">var</span> <span class="title class_">Nav</span> = <span class="keyword">function</span> (<span class="params">data</span>) &#123;                                     <span class="comment">//基础导航</span></span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">this</span>.<span class="property">item</span> = <span class="string">&#x27;&lt;a href=&quot;&#123;#href#&#125;&quot; title=&quot;&#123;#title#&#125;&quot;&gt;&#123;#name#&#125;&lt;/a&gt;&lt;br/&gt;&#x27;</span>;        <span class="comment">//基础导航样式模板</span></span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">this</span>.<span class="property">html</span> = <span class="string">&#x27;&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = data.<span class="property">length</span>; i &lt; len; i++) &#123;                                          <span class="comment">//格式化数据</span></span></span><br><span class="line"><span class="language-javascript">            <span class="variable language_">this</span>.<span class="property">html</span> += <span class="title function_">formatString</span>(<span class="variable language_">this</span>.<span class="property">item</span>, data[i]);</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">html</span>;</span></span><br><span class="line"><span class="language-javascript">    &#125;</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">var</span> <span class="title class_">NumNav</span> = <span class="keyword">function</span> (<span class="params">data</span>) &#123;                   <span class="comment">//带有消息提醒信息导航</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> tpl = <span class="string">&#x27;&lt;b&gt;&#123;#num#&#125;&lt;/b&gt;&#x27;</span>;                             <span class="comment">//消息提醒信息组件模板</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">for</span> (<span class="keyword">var</span> i = data.<span class="property">length</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;            <span class="comment">//装饰数据</span></span></span><br><span class="line"><span class="language-javascript">            data[i].<span class="property">name</span> += <span class="title function_">formatString</span>(tpl, data[i]);</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">return</span> <span class="title class_">Nav</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>, data);</span></span><br><span class="line"><span class="language-javascript">    &#125;</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">var</span> <span class="title class_">LinkNav</span> = <span class="keyword">function</span> (<span class="params">data</span>) &#123;                                   <span class="comment">//带有链接地址的导航</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> tpl = <span class="string">&#x27;&lt;span&gt;&#123;#href#&#125;&lt;/span&gt;&#x27;</span>;                                  <span class="comment">//链接地址模板</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">for</span> (<span class="keyword">var</span> i = data.<span class="property">length</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span></span><br><span class="line"><span class="language-javascript">            data[i].<span class="property">name</span> += <span class="title function_">formatString</span>(tpl, data[i]);</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">return</span> <span class="title class_">Nav</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>, data);                                             <span class="comment">//继承基础导航并返回字符串</span></span></span><br><span class="line"><span class="language-javascript">    &#125;</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">var</span> nav = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;content&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">    nav.<span class="property">innerHTML</span> = <span class="title class_">LinkNav</span>([</span></span><br><span class="line"><span class="language-javascript">        &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">href</span>: <span class="string">&#x27;http://www.baidu.com&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">title</span>: <span class="string">&#x27;百度一下，你就知道&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">name</span>: <span class="string">&#x27;百度&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">num</span>: <span class="string">&#x27;10&#x27;</span></span></span><br><span class="line"><span class="language-javascript">        &#125;,</span></span><br><span class="line"><span class="language-javascript">        &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">href</span>: <span class="string">&#x27;http://www.taobao.com&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">title</span>: <span class="string">&#x27;淘宝商城&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">name</span>: <span class="string">&#x27;淘宝&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">num</span>: <span class="string">&#x27;2&#x27;</span></span></span><br><span class="line"><span class="language-javascript">        &#125;,</span></span><br><span class="line"><span class="language-javascript">        &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">href</span>: <span class="string">&#x27;http://www.qq.com&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">title</span>: <span class="string">&#x27;腾讯首页&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">name</span>: <span class="string">&#x27;腾讯&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">num</span>: <span class="string">&#x27;3&#x27;</span></span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">    ]);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h1><pre><code>    其核心是方法的重用。将核心方法封装在基类中以实现共享，
+    这列方法通常是不变的的算法或者具有稳定的调用方式。 
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2016/11/03/designPattern/template-method/" data-id="cm7rthhcs007g8sd17657hn81" data-title="模板方法模式" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">行为型模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/11/03/designPattern/observer/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          观察者模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/03/designPattern/flyweight/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">享元模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C#</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/HTML/">HTML</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PHP/">PHP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/github/">github</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E5%89%8D%E7%AB%AF/">大前端</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%A2%E6%88%B7%E7%AB%AFJS/">客户端JS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%A1%88%E4%BE%8B/">案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BE%85%E5%8A%A9/">辅助</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%9F%BA%E7%A1%80/" rel="tag">CSS基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%BA%94%E7%94%A8/" rel="tag">CSS应用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" rel="tag">CSS浏览器差异</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML%E6%A6%82%E8%BF%B0/" rel="tag">HTML概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-EE/" rel="tag">Java EE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-SE/" rel="tag">Java SE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPT/" rel="tag">PPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E5%9F%BA%E7%A1%80/" rel="tag">c#基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E9%AB%98%E7%BA%A7/" rel="tag">c#高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E5%9F%BA%E7%A1%80/" rel="tag">js基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E6%89%A9%E5%B1%95/" rel="tag">js扩展</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E7%89%B9%E6%80%A7/" rel="tag">js特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E9%AB%98%E7%BA%A7/" rel="tag">js高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E5%9F%BA%E7%A1%80/" rel="tag">linux基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E5%9F%BA%E7%A1%80/" rel="tag">php基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E6%A1%86%E6%9E%B6/" rel="tag">php框架</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E7%BC%93%E5%AD%98/" rel="tag">php缓存</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="tag">php面向对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%AB%98%E7%BA%A7/" rel="tag">php高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sshkey/" rel="tag">sshkey</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8B%E8%BD%BD/" rel="tag">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%8B%E7%BB%8D/" rel="tag">介绍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">创建型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%B7%E6%9C%BA/" rel="tag">刷机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E8%A3%85/" rel="tag">安装</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">技巧型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE/" rel="tag">数据</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" rel="tag">数据库安装与配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">架构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%87%E7%AD%BE/" rel="tag">标签</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E6%95%88/" rel="tag">特效</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%8F%E5%85%B8/" rel="tag">经典</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">结构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">行为型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" rel="tag">装机配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%AE%97/" rel="tag">运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%82%E9%85%8D/" rel="tag">适配</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CSS%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">CSS基础</a> <a href="/tags/CSS%E5%BA%94%E7%94%A8/" style="font-size: 10px;">CSS应用</a> <a href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" style="font-size: 11px;">CSS浏览器差异</a> <a href="/tags/HTML%E6%A6%82%E8%BF%B0/" style="font-size: 11px;">HTML概述</a> <a href="/tags/Java-EE/" style="font-size: 19px;">Java EE</a> <a href="/tags/Java-SE/" style="font-size: 20px;">Java SE</a> <a href="/tags/PPT/" style="font-size: 10px;">PPT</a> <a href="/tags/c-%E5%9F%BA%E7%A1%80/" style="font-size: 14px;">c#基础</a> <a href="/tags/c-%E9%AB%98%E7%BA%A7/" style="font-size: 13px;">c#高级</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/js%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">js基础</a> <a href="/tags/js%E6%89%A9%E5%B1%95/" style="font-size: 12px;">js扩展</a> <a href="/tags/js%E7%89%B9%E6%80%A7/" style="font-size: 10px;">js特性</a> <a href="/tags/js%E9%AB%98%E7%BA%A7/" style="font-size: 14px;">js高级</a> <a href="/tags/linux%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">linux基础</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/mysql/" style="font-size: 14px;">mysql</a> <a href="/tags/php%E5%9F%BA%E7%A1%80/" style="font-size: 17px;">php基础</a> <a href="/tags/php%E6%A1%86%E6%9E%B6/" style="font-size: 11px;">php框架</a> <a href="/tags/php%E7%BC%93%E5%AD%98/" style="font-size: 12px;">php缓存</a> <a href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 14px;">php面向对象</a> <a href="/tags/php%E9%AB%98%E7%BA%A7/" style="font-size: 20px;">php高级</a> <a href="/tags/spring/" style="font-size: 13px;">spring</a> <a href="/tags/sshkey/" style="font-size: 10px;">sshkey</a> <a href="/tags/%E4%B8%8B%E8%BD%BD/" style="font-size: 13px;">下载</a> <a href="/tags/%E4%BB%8B%E7%BB%8D/" style="font-size: 11px;">介绍</a> <a href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">创建型模式</a> <a href="/tags/%E5%88%B7%E6%9C%BA/" style="font-size: 10px;">刷机</a> <a href="/tags/%E5%AE%89%E8%A3%85/" style="font-size: 12px;">安装</a> <a href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 16px;">技巧型模式</a> <a href="/tags/%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">数据</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" style="font-size: 11px;">数据库安装与配置</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 11px;">服务器</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">架构型模式</a> <a href="/tags/%E6%A0%87%E7%AD%BE/" style="font-size: 14px;">标签</a> <a href="/tags/%E7%89%B9%E6%95%88/" style="font-size: 10px;">特效</a> <a href="/tags/%E7%BB%8F%E5%85%B8/" style="font-size: 12px;">经典</a> <a href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">结构型模式</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 18px;">行为型模式</a> <a href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">装机配置</a> <a href="/tags/%E8%BF%90%E7%AE%97/" style="font-size: 12px;">运算</a> <a href="/tags/%E9%80%82%E9%85%8D/" style="font-size: 10px;">适配</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/03/02/server/run-nodejs/">pm2启动nodejs项目</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/09/baseJS/variable-hoisting/">变量提升</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E9%9D%A2%E8%AF%95%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">面试中遇到的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E5%85%B6%E4%BB%96/">其他</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/16/java/JVM/">JVM简介</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

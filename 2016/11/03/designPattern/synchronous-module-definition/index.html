@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>同步模块模式 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="请求发出后，无论模块是否存在，立即执行后续的逻辑，实现模块开发中对模块的立即引用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="同步模块模式">
+<meta property="og:url" content="http://example.com/2016/11/03/designPattern/synchronous-module-definition/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="请求发出后，无论模块是否存在，立即执行后续的逻辑，实现模块开发中对模块的立即引用。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2016-11-03T09:35:23.000Z">
+<meta property="article:modified_time" content="2025-03-02T15:49:02.606Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="架构型模式">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-designPattern/synchronous-module-definition" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/11/03/designPattern/synchronous-module-definition/" class="article-date">
+  <time class="dt-published" datetime="2016-11-03T09:35:23.000Z" itemprop="datePublished">2016-11-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      同步模块模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>请求发出后，无论模块是否存在，立即执行后续的逻辑，实现模块开发中对模块的立即引用。</p>
+</blockquote>
+<span id="more"></span>
+<h1 id="模块化"><a href="#模块化" class="headerlink" title="模块化"></a>模块化</h1><ul>
+<li>将复杂的系统分解成高内聚、低耦合的模块，使系统开发变得可控、可维护、可拓展，提高模块复用率。</li>
+</ul>
+<h1 id="模块管理器对象"><a href="#模块管理器对象" class="headerlink" title="模块管理器对象"></a>模块管理器对象</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> F = F || &#123;&#125;;                        <span class="comment">//定义模块管理器单体对象</span></span><br><span class="line"><span class="comment">//定义模块方法（模块路由,模块方法） --通常模块方法应该放在闭包中实现，这里简化了</span></span><br><span class="line">F.<span class="property">define</span> = <span class="keyword">function</span> (<span class="params">str, fn</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> parts = str.<span class="title function_">split</span>(<span class="string">&#x27;.&#x27;</span>),             <span class="comment">//解析模块路由</span></span><br><span class="line">            old = parent = <span class="variable language_">this</span>,          <span class="comment">//old表示当前模块的祖父模块，parent表示当前模块的父模块,初始均为F</span></span><br><span class="line">            i = len = <span class="number">0</span>;                       <span class="comment">//i模块层级，len模块层级长度</span></span><br><span class="line">    <span class="keyword">if</span> (parts[<span class="number">0</span>] === <span class="string">&#x27;F&#x27;</span>) &#123;                   <span class="comment">//如果第一个模块是模块管理器单体对象，则移除</span></span><br><span class="line">        parts = parts.<span class="title function_">slice</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (parts[<span class="number">0</span>] === <span class="string">&#x27;define&#x27;</span> || parts[<span class="number">0</span>] === <span class="string">&#x27;moudle&#x27;</span>) &#123;    <span class="comment">//屏蔽对define与module模块方法的重写</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (len = parts.<span class="property">length</span>; i &lt; len; i++) &#123;                  <span class="comment">//遍历路由模块并定义每层模块</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> parent[parts[i]] === <span class="string">&#x27;undefined&#x27;</span>) &#123;            <span class="comment">//如果父模块中不存在当前模块，则声明当前模块</span></span><br><span class="line">            parent[parts[i]] = &#123;&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        old = parent;                       <span class="comment">//缓存下一层级的祖父模块 从this(F)-&gt;old-&gt;parent一层层接下去</span></span><br><span class="line">        parent = parent[parts[i]];     <span class="comment">//缓存下一层级父模块</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (fn) &#123;                     <span class="comment">//如果给定模块方法则定义该模块方法</span></span><br><span class="line">        old[parts[--i]] = <span class="title function_">fn</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>;               <span class="comment">//返回模块管理器单体对象</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="模块创建于测试"><a href="#模块创建于测试" class="headerlink" title="模块创建于测试"></a>模块创建于测试</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义模块--F.string模块</span></span><br><span class="line">    F.<span class="title function_">define</span>(<span class="string">&#x27;string&#x27;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="attr">trim</span>: <span class="keyword">function</span> (<span class="params">str</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> str.<span class="title function_">replace</span>(<span class="regexp">/^\s+|\s+$/g</span>, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">//测试--通常开发中不允许这样直接调用，因为模块通常保存在闭包内部的私有变量里，而不会保存在F上，因此是获取不到的。</span></span><br><span class="line">    <span class="comment">//开发中是不符合规范的，这里只是方便测试</span></span><br><span class="line">        <span class="keyword">var</span> test = <span class="string">&#x27;      测试   &#x27;</span>;</span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;[&#x27;</span> + test + <span class="string">&#x27;]&#x27;</span>);                  <span class="comment">//[      测试   ]</span></span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;[&#x27;</span> + F.<span class="property">string</span>.<span class="title function_">trim</span>(test) + <span class="string">&#x27;]&#x27;</span>);   <span class="comment">//[测试]</span></span><br><span class="line">    <span class="comment">//&lt;div id=&quot;test&quot;&gt;&lt;/div&gt;下测试</span></span><br><span class="line">    F.<span class="title function_">define</span>(<span class="string">&#x27;dom&#x27;</span>, <span class="keyword">function</span> (<span class="params">id</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> $ = <span class="keyword">function</span> (<span class="params">id</span>) &#123;</span><br><span class="line">            $.dom = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(id);</span><br><span class="line">            <span class="keyword">return</span> $;</span><br><span class="line">        &#125;</span><br><span class="line">        $.html = <span class="keyword">function</span> (<span class="params">html</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (html) &#123;</span><br><span class="line">                <span class="variable language_">this</span>.<span class="property">dom</span>.<span class="property">innerHTML</span> = html;</span><br><span class="line">                <span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">dom</span>.<span class="property">innerHTML</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> $(id);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(F.<span class="title function_">dom</span>(<span class="string">&#x27;test&#x27;</span>).<span class="title function_">html</span>());              <span class="comment">//test</span></span><br><span class="line">    <span class="comment">//先声明，后创建,这种方式是把模块添加到F对象上了，模块化开发中几乎不用</span></span><br><span class="line">    F.<span class="title function_">define</span>(<span class="string">&#x27;dom.addClass&#x27;</span>);</span><br><span class="line">    F.<span class="property">dom</span>.<span class="property">addClass</span> = (<span class="keyword">function</span> (<span class="params">type, fn</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">className</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!~<span class="variable language_">this</span>.<span class="property">dom</span>.<span class="property">className</span>.<span class="title function_">indexOf</span>(className)) &#123;</span><br><span class="line">                <span class="variable language_">this</span>.<span class="property">dom</span>.<span class="property">className</span> = <span class="string">&#x27; &#x27;</span> + className;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)();</span><br><span class="line">    F.<span class="title function_">dom</span>(<span class="string">&#x27;test&#x27;</span>).<span class="title function_">addClass</span>(<span class="string">&#x27;test&#x27;</span>);     <span class="comment">//&lt;div id=&quot;test&quot; class=&quot; test&quot;&gt;test&lt;/div&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="模块调用"><a href="#模块调用" class="headerlink" title="模块调用"></a>模块调用</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">F.<span class="property">module</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> args = [].<span class="property">slice</span>.<span class="title function_">call</span>(<span class="variable language_">arguments</span>),                                                  <span class="comment">//获取参数转化为数组</span></span><br><span class="line">            fn = args.<span class="title function_">pop</span>(),                                                                        <span class="comment">//获取回调执行函数</span></span><br><span class="line">            parts = args[<span class="number">0</span>] &amp;&amp; args[<span class="number">0</span>] <span class="keyword">instanceof</span> <span class="title class_">Array</span> ? args[<span class="number">0</span>] : args,   <span class="comment">//获取依赖模块</span></span><br><span class="line">            modules = [],                                                                            <span class="comment">//依赖模块列表</span></span><br><span class="line">            modIDs = <span class="string">&#x27;&#x27;</span>,                                                                             <span class="comment">//模块路由</span></span><br><span class="line">            i = <span class="number">0</span>,                                                                                        <span class="comment">//依赖模块索引</span></span><br><span class="line">            ilen = parts.<span class="property">length</span>,                                                                   <span class="comment">//依赖模块长度</span></span><br><span class="line">            parent, j, jlen;                                                                          <span class="comment">//父模块，模块路由层级索引，模块路由层级长度</span></span><br><span class="line">    <span class="keyword">while</span> (i &lt; ilen) &#123;                      <span class="comment">//遍历依赖模块</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> parts[i] === <span class="string">&#x27;string&#x27;</span>) &#123;           <span class="comment">//如果是模块路由</span></span><br><span class="line">            parent = <span class="variable language_">this</span>;                                 <span class="comment">//设置当前模块父对象(F)</span></span><br><span class="line">            modIDs = parts[i].<span class="title function_">replace</span>(<span class="regexp">/^F\./</span>, <span class="string">&#x27;&#x27;</span>).<span class="title function_">split</span>(<span class="string">&#x27;.&#x27;</span>);           <span class="comment">//解析模块路由，并屏蔽掉模块父对象,其实就是模块名(xx.xx)解成数组</span></span><br><span class="line">            <span class="keyword">for</span> (j = <span class="number">0</span>, jlen = modIDs.<span class="property">length</span>; j &lt; jlen; j++) &#123;       <span class="comment">//遍历模块路由层级</span></span><br><span class="line">                parent = parent[modIDs[j]] || <span class="literal">false</span>;                    <span class="comment">//重置父模块,从F向下一层层递进</span></span><br><span class="line">            &#125;</span><br><span class="line">            modules.<span class="title function_">push</span>(parent);       <span class="comment">//将模块添加到依赖模块列表中</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            modules.<span class="title function_">push</span>(parts[i]);     <span class="comment">//直接加入依赖模块列表中</span></span><br><span class="line">        &#125;</span><br><span class="line">        i++;                                       <span class="comment">//取下一个依赖模块</span></span><br><span class="line">    &#125;</span><br><span class="line">    fn.<span class="title function_">apply</span>(<span class="literal">null</span>, modules);             <span class="comment">//执行回调函数</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//&lt;div id=&#x27;test&#x27;&gt;&lt;/div&gt; 环境下测试</span></span><br><span class="line">F.<span class="title function_">module</span>([<span class="string">&#x27;dom&#x27;</span>, <span class="variable language_">document</span>], <span class="keyword">function</span> (<span class="params">dom, doc</span>) &#123;       <span class="comment">//其实现原理是首先遍历并获取所有的模块依赖，并一次性保存在 </span></span><br><span class="line">    <span class="title function_">dom</span>(<span class="string">&#x27;test&#x27;</span>).<span class="title function_">html</span>(<span class="string">&#x27;new add&#x27;</span>);                                        <span class="comment">//依赖模块列表中，然后将这些依赖模块作为参数传入执行函数中执行</span></span><br><span class="line">    doc.<span class="property">body</span>.<span class="property">style</span>.<span class="property">background</span> = <span class="string">&#x27;red&#x27;</span>;                    <span class="comment">//执行结果 文本被改为new add，body背景变为了红色</span></span><br><span class="line">&#125;)         <span class="comment">//注意：在调用模块时，这些模块必然是创建好的，对于未加载文件中的模块需要异步处理</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><pre><code>    同步模块模式是模块化开发的一种最简单形式，这种模式使得依赖的模块无论加载，
+    无论有无，模块创建即执行，这就要求依赖的模块必然是创建过的。
+    模块化开发是一种对系统的分解，其使用更像是组合模式的模块组合，具有极大地灵活性。
+</code></pre>
+<h1 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h1><pre><code>    实现模块化开发需要建立大量的闭包，会占用大量的系统的资源。
+    同时随着模块数量的增加(好处是开发成本减少)，但接口数量却随之增加，
+    接口的使用成本和开发维护的成本也随之增加，所以要合理模块分割。 
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2016/11/03/designPattern/synchronous-module-definition/" data-id="cm7rthhcr007b8sd15med68wp" data-title="同步模块模式" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">架构型模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/11/03/designPattern/asynchronous-module-definition/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          异步模块模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/03/designPattern/waiter/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">等待者模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C#</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/HTML/">HTML</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PHP/">PHP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/github/">github</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E5%89%8D%E7%AB%AF/">大前端</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%A2%E6%88%B7%E7%AB%AFJS/">客户端JS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%A1%88%E4%BE%8B/">案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BE%85%E5%8A%A9/">辅助</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%9F%BA%E7%A1%80/" rel="tag">CSS基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E5%BA%94%E7%94%A8/" rel="tag">CSS应用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" rel="tag">CSS浏览器差异</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML%E6%A6%82%E8%BF%B0/" rel="tag">HTML概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-EE/" rel="tag">Java EE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-SE/" rel="tag">Java SE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPT/" rel="tag">PPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E5%9F%BA%E7%A1%80/" rel="tag">c#基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c-%E9%AB%98%E7%BA%A7/" rel="tag">c#高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E5%9F%BA%E7%A1%80/" rel="tag">js基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E6%89%A9%E5%B1%95/" rel="tag">js扩展</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E7%89%B9%E6%80%A7/" rel="tag">js特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E9%AB%98%E7%BA%A7/" rel="tag">js高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E5%9F%BA%E7%A1%80/" rel="tag">linux基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E5%9F%BA%E7%A1%80/" rel="tag">php基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E6%A1%86%E6%9E%B6/" rel="tag">php框架</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E7%BC%93%E5%AD%98/" rel="tag">php缓存</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="tag">php面向对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E9%AB%98%E7%BA%A7/" rel="tag">php高级</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sshkey/" rel="tag">sshkey</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8B%E8%BD%BD/" rel="tag">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%8B%E7%BB%8D/" rel="tag">介绍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">创建型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%B7%E6%9C%BA/" rel="tag">刷机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E8%A3%85/" rel="tag">安装</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">技巧型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE/" rel="tag">数据</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" rel="tag">数据库安装与配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">架构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%87%E7%AD%BE/" rel="tag">标签</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E6%95%88/" rel="tag">特效</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%8F%E5%85%B8/" rel="tag">经典</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">结构型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="tag">行为型模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" rel="tag">装机配置</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%AE%97/" rel="tag">运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%82%E9%85%8D/" rel="tag">适配</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CSS%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">CSS基础</a> <a href="/tags/CSS%E5%BA%94%E7%94%A8/" style="font-size: 10px;">CSS应用</a> <a href="/tags/CSS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%AE%E5%BC%82/" style="font-size: 11px;">CSS浏览器差异</a> <a href="/tags/HTML%E6%A6%82%E8%BF%B0/" style="font-size: 11px;">HTML概述</a> <a href="/tags/Java-EE/" style="font-size: 19px;">Java EE</a> <a href="/tags/Java-SE/" style="font-size: 20px;">Java SE</a> <a href="/tags/PPT/" style="font-size: 10px;">PPT</a> <a href="/tags/c-%E5%9F%BA%E7%A1%80/" style="font-size: 14px;">c#基础</a> <a href="/tags/c-%E9%AB%98%E7%BA%A7/" style="font-size: 13px;">c#高级</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/js%E5%9F%BA%E7%A1%80/" style="font-size: 12px;">js基础</a> <a href="/tags/js%E6%89%A9%E5%B1%95/" style="font-size: 12px;">js扩展</a> <a href="/tags/js%E7%89%B9%E6%80%A7/" style="font-size: 10px;">js特性</a> <a href="/tags/js%E9%AB%98%E7%BA%A7/" style="font-size: 14px;">js高级</a> <a href="/tags/linux%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">linux基础</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/mysql/" style="font-size: 14px;">mysql</a> <a href="/tags/php%E5%9F%BA%E7%A1%80/" style="font-size: 17px;">php基础</a> <a href="/tags/php%E6%A1%86%E6%9E%B6/" style="font-size: 11px;">php框架</a> <a href="/tags/php%E7%BC%93%E5%AD%98/" style="font-size: 12px;">php缓存</a> <a href="/tags/php%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" style="font-size: 14px;">php面向对象</a> <a href="/tags/php%E9%AB%98%E7%BA%A7/" style="font-size: 20px;">php高级</a> <a href="/tags/spring/" style="font-size: 13px;">spring</a> <a href="/tags/sshkey/" style="font-size: 10px;">sshkey</a> <a href="/tags/%E4%B8%8B%E8%BD%BD/" style="font-size: 13px;">下载</a> <a href="/tags/%E4%BB%8B%E7%BB%8D/" style="font-size: 11px;">介绍</a> <a href="/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">创建型模式</a> <a href="/tags/%E5%88%B7%E6%9C%BA/" style="font-size: 10px;">刷机</a> <a href="/tags/%E5%AE%89%E8%A3%85/" style="font-size: 12px;">安装</a> <a href="/tags/%E6%8A%80%E5%B7%A7%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 16px;">技巧型模式</a> <a href="/tags/%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">数据</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" style="font-size: 11px;">数据库安装与配置</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 11px;">服务器</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 14px;">架构型模式</a> <a href="/tags/%E6%A0%87%E7%AD%BE/" style="font-size: 14px;">标签</a> <a href="/tags/%E7%89%B9%E6%95%88/" style="font-size: 10px;">特效</a> <a href="/tags/%E7%BB%8F%E5%85%B8/" style="font-size: 12px;">经典</a> <a href="/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">结构型模式</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 18px;">行为型模式</a> <a href="/tags/%E8%A3%85%E6%9C%BA%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">装机配置</a> <a href="/tags/%E8%BF%90%E7%AE%97/" style="font-size: 12px;">运算</a> <a href="/tags/%E9%80%82%E9%85%8D/" style="font-size: 10px;">适配</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/03/02/server/run-nodejs/">pm2启动nodejs项目</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/09/baseJS/variable-hoisting/">变量提升</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E9%9D%A2%E8%AF%95%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">面试中遇到的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/22/java/%E5%85%B6%E4%BB%96/">其他</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/16/java/JVM/">JVM简介</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
